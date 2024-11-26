@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 
-
 st.set_page_config(
     page_title = "PISI3 - Grupo 09",
     layout = "centered",
@@ -13,7 +12,6 @@ st.set_page_config(
 )
 
 path = "data"
-
 pedidos = path + "/olist_orders_dataset.csv"
 produtos = path + "/olist_products_dataset.csv"
 vendedores = path + "/olist_sellers_dataset.csv"
@@ -23,18 +21,6 @@ geoloc = path + "/olist_geolocation_dataset.csv"
 clientes = path + "/olist_customers_dataset.csv"
 pagamentos = path + "/olist_order_payments_dataset.csv"
 categoria_nome = path + "/product_category_name_translation.csv"
-
-st.header("Os bancos do dataset")
-with st.echo():
-    df_categorias = pd.read_csv(categoria_nome)
-    df_clientes = pd.read_csv(clientes)
-    df_geoloc = pd.read_csv(geoloc)
-    df_pedidos = pd.read_csv(pedidos)
-    df_itens = pd.read_csv(itens)
-    df_pagamentos = pd.read_csv(pagamentos)
-    df_produtos = pd.read_csv(produtos)
-    df_reviews = pd.read_csv(reviews)
-    df_vendedores = pd.read_csv(vendedores)
 
 def transformar_dados():
     with st.echo():
@@ -95,7 +81,7 @@ def mostrar_analise_prazos():
         fig2 = px.bar(state_ontime_counts, x='customer_state', y='order_count', color='on_time',
                     labels={'customer_state': 'Estado do Cliente', 'order_count': 'Número de Pedidos', 'on_time': 'Entrega no Prazo'},
                     title='Número de Pedidos Entregues no Prazo vs. Fora do Prazo por Estado',
-                    color_continuous_scale=["red", "blue"])
+                    color_continuous_scale=["#f77678", "#768ff7"])
     st.markdown('''
                 >Primeiramente é feito um merge entre pedidos e clientes para se ter acesso a coluna customer_state.
                 Após isso agrupamos com a coluna customer_state e on_time e é extraída a contagem''')
@@ -113,7 +99,7 @@ def mostrar_analise_prazos():
         fig3 = px.bar(category_delay_counts, x='order_count', y="product_category_name", color='on_time',
                     labels={'product_category_name': 'Categoria do Produto', 'order_count': 'Número de Pedidos', 'on_time': 'Entrega no Prazo'},
                     title='Atraso na Entrega por Categoria de Produto',
-                    color_continuous_scale=["red", "blue"])
+                    color_continuous_scale=["#f77678", "#768ff7"])
     st.markdown('''
                 >Aqui é reutilizada a "merged_df" do código anterior além de ser feito um merge com df_itens e df_produtos.
                 Assim sendo possível relacionar a coluna on_time com a categoria do produto através do groupby.
@@ -124,6 +110,45 @@ def mostrar_analise_prazos():
                 O motivo é a observação de uma possível categoria problemática nas entregas, mas não há uma categoria de produto
                 com problemas de atraso aparentes.
                 ''')
+    with st.echo():
+        # Create a boolean mask for delayed orders
+        delayed_orders_mask = df_pedidos['order_delivered_customer_date'] > df_pedidos['order_estimated_delivery_date']
+        # Filter the dataframe to include only delayed orders
+        delayed_orders_df = df_pedidos[delayed_orders_mask]
+        # Calculate the delay in days
+        delayed_orders_df['delay_days'] = (delayed_orders_df['order_delivered_customer_date'] - delayed_orders_df['order_estimated_delivery_date']).dt.days
+
+        # Create the plot
+        fig4 = px.histogram(delayed_orders_df, x='delay_days', nbins=30,
+                        labels={'delay_days': 'Atraso em Dias'},
+                        title='Dias de Atraso nos Pedidos')
+    st.plotly_chart(fig4)
+
+    with st.echo():
+        # Merge the dataframes
+        merged_df = pd.merge(df_pedidos, df_clientes, on='customer_id', how='left')
+        merged_df = pd.merge(merged_df, df_geoloc, left_on='customer_zip_code_prefix', right_on='geolocation_zip_code_prefix', how='left')
+        # Calculate delivery delay
+        merged_df['delivery_delay'] = (merged_df['order_delivered_customer_date'] - merged_df['order_estimated_delivery_date']).dt.days
+
+        # Filter for delayed orders
+        delayed_orders = merged_df[merged_df['delivery_delay'] > 0]
+
+        # Group by customer state and calculate the mean delay
+        state_delays = delayed_orders.groupby('customer_state')['delivery_delay'].mean().reset_index()
+
+        # Sort by mean delay in descending order
+        state_delays = state_delays.sort_values('delivery_delay', ascending=False)
+
+        # Plot the results
+        fig5 = px.bar(state_delays, x='customer_state', y='delivery_delay',
+                    labels={'customer_state': 'Estado', 'delivery_delay': 'Atraso Médio (dias)'},
+                    title='Atraso Médio de Entrega por Estado')
+    st.plotly_chart(fig5)
+
+
+
+
 
 
 
@@ -219,16 +244,40 @@ def analise_avaliacoes():
         fig2 = px.bar(merged_counts, x='customer_state', y='percentage', color='review_score',
                     labels={'customer_state': 'Estado do Cliente', 'percentage': 'Porcentagem de Avaliações', 'review_score': 'Nota da Avaliação'},
                     title='Porcentagem de Notas de Avaliação por Estado',
-                    color_continuous_scale=["red", "#00FF00"])
+                    color_continuous_scale=["#ff1600", "#76f786"])
     st.plotly_chart(fig2)
 
-st.header("Transformação de dados")
-transformar_dados()
-st.header("Concentração de vendedores e clientes nos estados")
-mostrar_relacao_estados()
-st.header("Análise dos prazos\n")
-mostrar_analise_prazos()
-st.header("Análise da trend de compras\n")
-mostrar_trend_compras()
-st.header("Avaliações")
-analise_avaliacoes()
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Main", "Transformar","Concentração", "Prazos", "Compras", "Avaliações"])
+
+with tab1:
+    st.markdown('''
+                Dataset utilizado: [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce/data)
+                ''')
+    st.header("Os bancos do dataset")
+    with st.echo():
+        df_categorias = pd.read_csv(categoria_nome)
+        df_clientes = pd.read_csv(clientes)
+        df_geoloc = pd.read_csv(geoloc)
+        df_pedidos = pd.read_csv(pedidos)
+        df_itens = pd.read_csv(itens)
+        df_pagamentos = pd.read_csv(pagamentos)
+        df_produtos = pd.read_csv(produtos)
+        df_reviews = pd.read_csv(reviews)
+        df_vendedores = pd.read_csv(vendedores)
+    
+
+with tab2:
+    st.header("Transformação de dados")
+    transformar_dados()
+with tab3:
+    st.header("Concentração de vendedores e clientes nos estados")
+    mostrar_relacao_estados()
+with tab4:
+    st.header("Análise dos prazos\n")
+    mostrar_analise_prazos()
+with tab5:
+    st.header("Análise das informações de compras\n")
+    mostrar_trend_compras()
+with tab6:
+    st.header("Avaliações")
+    analise_avaliacoes()
