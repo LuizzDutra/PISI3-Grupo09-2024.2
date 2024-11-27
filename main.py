@@ -250,7 +250,7 @@ def analise_avaliacoes():
                     labels={'review_score': 'Nota da Avaliação', 'count': 'Número de Avaliações'},
                     title='Distribuição das Avaliações dos Clientes')
     
-    st.markdown('''>Aqui agrupamos as avaliações dos clientes por nota, conta quantas avaliações há para cada nota e cria um gráfico de barras para visualizar essa distribuição. O gráfico tem eixos rotulados com "Nota da Avaliação" e "Número de Avaliações", com um título indicando que o gráfico mostra a distribuição das avaliações dos clientes.''')
+    st.markdown('''>Aqui agrupamos as avaliações dos clientes por nota, contamos quantas avaliações há para cada nota e criamos um gráfico de barras para visualizar essa distribuição. O gráfico tem eixos rotulados com "Nota da Avaliação" e "Número de Avaliações", com um título indicando que o gráfico mostra a distribuição das avaliações dos clientes.''')
     
     st.plotly_chart(fig1)
 
