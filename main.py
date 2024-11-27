@@ -122,7 +122,13 @@ def mostrar_analise_prazos():
         fig4 = px.histogram(delayed_orders_df, x='delay_days', nbins=30,
                         labels={'delay_days': 'Atraso em Dias'},
                         title='Dias de Atraso nos Pedidos')
+    
+    st.markdown('''
+                >Aqui criamos uma máscara para identificar pedidos entregues com atraso, filtramos esses pedidos em um novo DataFrame e calculamos o atraso em dias, armazenando o valor em uma nova coluna chamada delay_days''')
+
     st.plotly_chart(fig4)
+
+    st.markdown('''>O histograma acima nos mostra que a maioria dos pedidos que atrasaram, sofreram atrasos entre 1 (0 não entra na análise, nesse caso o pedido foi entregue dentro do prazo estimado) a 9 dias. ''')
 
     with st.echo():
         # Merge the dataframes
@@ -140,11 +146,16 @@ def mostrar_analise_prazos():
         # Sort by mean delay in descending order
         state_delays = state_delays.sort_values('delivery_delay', ascending=False)
 
+    st.markdown('''>Este código realiza uma análise dos atrasos nas entregas de pedidos, mesclando dados de pedidos, clientes e geolocalização. Ele calcula o atraso médio de entrega por estado, filtra os pedidos com atraso e agrupa os resultados por estado do cliente, ordenando os estados com maior atraso médio.''')    
         # Plot the results
-        fig5 = px.bar(state_delays, x='customer_state', y='delivery_delay',
+    
+    fig5 = px.bar(state_delays, x='customer_state', y='delivery_delay',
                     labels={'customer_state': 'Estado', 'delivery_delay': 'Atraso Médio (dias)'},
                     title='Atraso Médio de Entrega por Estado')
+    
     st.plotly_chart(fig5)
+
+    st.markdown('''>O gráfico acima mostra o atraso médio dos pedidos em função do estado do cliente, podemos ver que o Amapá possui o maior atraso médio, de 106 dias, no entanto apenas 3 pedidos de  68, que foram pro Amapá atrasaram.''')
 
 
 
@@ -160,6 +171,9 @@ def mostrar_trend_compras():
         product_popularity = merged_df.groupby('product_category_name')['order_id'].count().reset_index()
         product_popularity = product_popularity.rename(columns={'order_id': 'order_count'})
         fig1 = px.bar(product_popularity, x='order_count', y='product_category_name', title='Popularidade das categorias de produto')
+
+        fig1.update_layout(xaxis_title='Quantidade de Pedidos',yaxis_title='Categoria de Produto')
+
     st.markdown('''
                 >Primeiramente é feito o merge entre itens produtos e pedidos, para serem utilizadas as colunas de
                 categoria de item e preço que seram relevantes no uso do merged_df.
@@ -179,6 +193,9 @@ def mostrar_trend_compras():
     with st.echo():
         average_price_by_category = merged_df.groupby('product_category_name')['price'].mean().reset_index()
         fig2 = px.bar(average_price_by_category, x='price', y='product_category_name', title='Preço médio por categoria de produto')
+
+        fig2.update_layout(xaxis_title='Preço', yaxis_title='Categoria de Produto' )
+
     st.markdown('''
                 >Neste código é realizado o cálculo das médias de preço por categoria de produto.
                 ''')
@@ -194,6 +211,9 @@ def mostrar_trend_compras():
         monthly_purchases = merged_df.groupby('purchase_month')['order_id'].count().reset_index()
         monthly_purchases = monthly_purchases.rename(columns={'order_id':'order_count'})
         fig3 = px.line(monthly_purchases, x='purchase_month', y='order_count', title='Quantidade de compras por mês')
+
+        fig3.update_layout(xaxis_title='Mês da Compra',yaxis_title='Quantidade de Pedidos')
+
     st.markdown('''
                 >Aqui é criada uma coluna no merged_df denominada de purchase_month com o intuito de realizar a contagem de compras
                 por mês.
@@ -211,6 +231,9 @@ def mostrar_trend_compras():
         price_category_purchases = merged_df.groupby('price_category', observed=True)['order_id'].count().reset_index()
         price_category_purchases = price_category_purchases.rename(columns={'order_id':'order_count'})
         fig4 = px.bar(price_category_purchases, x='price_category', y='order_count', title='Valor de compra por categoria')
+
+        fig4.update_layout(xaxis_title='Categoria de Preço',yaxis_title='Quantidade de Pedidos')
+
     st.markdown('''
                 >Neste código é realizada a separação de compras em categorias de preço através do cut.
                 Após isso é feita a contagem das compras através do agrupamento das categorias.
