@@ -193,7 +193,7 @@ def mostrar_trend_compras():
     with st.echo():
         average_price_by_category = merged_df.groupby('product_category_name')['price'].mean().reset_index()
         fig2 = px.bar(average_price_by_category, x='price', y='product_category_name', title='Preço médio por categoria de produto')
-
+    
         fig2.update_layout(xaxis_title='Preço', yaxis_title='Categoria de Produto' )
 
     st.markdown('''
@@ -249,6 +249,9 @@ def analise_avaliacoes():
         fig1 = px.bar(review_counts, x='review_score', y='count',
                     labels={'review_score': 'Nota da Avaliação', 'count': 'Número de Avaliações'},
                     title='Distribuição das Avaliações dos Clientes')
+    
+    st.markdown('''>Aqui agrupamos as avaliações dos clientes por nota, conta quantas avaliações há para cada nota e cria um gráfico de barras para visualizar essa distribuição. O gráfico tem eixos rotulados com "Nota da Avaliação" e "Número de Avaliações", com um título indicando que o gráfico mostra a distribuição das avaliações dos clientes.''')
+    
     st.plotly_chart(fig1)
 
     with st.echo():
@@ -263,8 +266,10 @@ def analise_avaliacoes():
 
         merged_counts = pd.merge(state_review_counts, total_orders_per_state, on='customer_state', how='left')
         merged_counts['percentage'] = (merged_counts['order_count'] / merged_counts['total_orders']) * 100
-
-        fig2 = px.bar(merged_counts, x='customer_state', y='percentage', color='review_score',
+    
+    st.markdown(''''>Aqui realizamos uma análise de pedidos, avaliando a quantidade de pedidos por estado e a distribuição das avaliações dos clientes (por nota) em relação ao total de pedidos em cada estado. O gráfico gerado mostra a porcentagem de cada nota de avaliação em cada estado, com cores representando as diferentes notas.''')
+        
+    fig2 = px.bar(merged_counts, x='customer_state', y='percentage', color='review_score',
                     labels={'customer_state': 'Estado do Cliente', 'percentage': 'Porcentagem de Avaliações', 'review_score': 'Nota da Avaliação'},
                     title='Porcentagem de Notas de Avaliação por Estado',
                     color_continuous_scale=["#ff1600", "#76f786"])
