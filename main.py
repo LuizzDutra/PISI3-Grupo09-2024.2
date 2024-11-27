@@ -114,7 +114,7 @@ def mostrar_analise_prazos():
         # Create a boolean mask for delayed orders
         delayed_orders_mask = df_pedidos['order_delivered_customer_date'] > df_pedidos['order_estimated_delivery_date']
         # Filter the dataframe to include only delayed orders
-        delayed_orders_df = df_pedidos[delayed_orders_mask]
+        delayed_orders_df = df_pedidos.copy()[delayed_orders_mask]
         # Calculate the delay in days
         delayed_orders_df['delay_days'] = (delayed_orders_df['order_delivered_customer_date'] - delayed_orders_df['order_estimated_delivery_date']).dt.days
 
