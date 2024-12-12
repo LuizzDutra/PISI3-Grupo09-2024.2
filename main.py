@@ -11,16 +11,16 @@ st.set_page_config(
     }
 )
 
-path = "data"
-pedidos = path + "/olist_orders_dataset.csv"
-produtos = path + "/olist_products_dataset.csv"
-vendedores = path + "/olist_sellers_dataset.csv"
-itens = path + "/olist_order_items_dataset.csv"
-reviews = path + "/olist_order_reviews_dataset.csv"
-geoloc = path + "/olist_geolocation_dataset.csv"
-clientes = path + "/olist_customers_dataset.csv"
-pagamentos = path + "/olist_order_payments_dataset.csv"
-categoria_nome = path + "/product_category_name_translation.csv"
+path = "data/"
+pedidos = path + "olist_orders_dataset.parquet"
+produtos = path + "olist_products_dataset.parquet"
+vendedores = path + "olist_sellers_dataset.parquet"
+itens = path + "olist_order_items_dataset.parquet"
+reviews = path + "olist_order_reviews_dataset.parquet"
+geoloc = path + "olist_geolocation_dataset.parquet"
+clientes = path + "olist_customers_dataset.parquet"
+pagamentos = path + "olist_order_payments_dataset.parquet"
+categoria_nome = path + "product_category_name_translation.parquet"
 
 def transformar_dados():
     with st.echo():
@@ -296,15 +296,15 @@ with tab1:
                 ''')
     st.header("Os bancos do dataset")
     with st.echo():
-        df_categorias = pd.read_csv(categoria_nome)
-        df_clientes = pd.read_csv(clientes)
-        df_geoloc = pd.read_csv(geoloc)
-        df_pedidos = pd.read_csv(pedidos)
-        df_itens = pd.read_csv(itens)
-        df_pagamentos = pd.read_csv(pagamentos)
-        df_produtos = pd.read_csv(produtos)
-        df_reviews = pd.read_csv(reviews)
-        df_vendedores = pd.read_csv(vendedores)
+        df_categorias = pd.read_parquet(categoria_nome)
+        df_clientes = pd.read_parquet(clientes)
+        df_geoloc = pd.read_parquet(geoloc)
+        df_pedidos = pd.read_parquet(pedidos)
+        df_itens = pd.read_parquet(itens)
+        df_pagamentos = pd.read_parquet(pagamentos)
+        df_produtos = pd.read_parquet(produtos)
+        df_reviews = pd.read_parquet(reviews)
+        df_vendedores = pd.read_parquet(vendedores)
     
 
 with tab2:
