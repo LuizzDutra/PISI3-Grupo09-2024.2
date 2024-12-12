@@ -11,16 +11,16 @@ st.set_page_config(
     }
 )
 
-path = "data"
-pedidos = path + "/olist_orders_dataset.csv"
-produtos = path + "/olist_products_dataset.csv"
-vendedores = path + "/olist_sellers_dataset.csv"
-itens = path + "/olist_order_items_dataset.csv"
-reviews = path + "/olist_order_reviews_dataset.csv"
-geoloc = path + "/olist_geolocation_dataset.csv"
-clientes = path + "/olist_customers_dataset.csv"
-pagamentos = path + "/olist_order_payments_dataset.csv"
-categoria_nome = path + "/product_category_name_translation.csv"
+path = "data/"
+pedidos = path + "olist_orders_dataset.parquet"
+produtos = path + "olist_products_dataset.parquet"
+vendedores = path + "olist_sellers_dataset.parquet"
+itens = path + "olist_order_items_dataset.parquet"
+reviews = path + "olist_order_reviews_dataset.parquet"
+geoloc = path + "olist_geolocation_dataset.parquet"
+clientes = path + "olist_customers_dataset.parquet"
+pagamentos = path + "olist_order_payments_dataset.parquet"
+categoria_nome = path + "product_category_name_translation.parquet"
 
 def transformar_dados():
     with st.echo():
@@ -71,7 +71,6 @@ def mostrar_analise_prazos():
                 >Mas ainda cerca de 10% chegam atrasados.
                 ''')
 
-    del on_time_counts
 
     with st.echo():
         # Merge the dataframes
@@ -90,7 +89,6 @@ def mostrar_analise_prazos():
     st.plotly_chart(fig2)
     st.markdown('''
                 >Com este gráfico tem o intuito de tentar visualizar se algum estado em particular possui algum problema com prazos de entrega, entretanto, os estados parecem ter uma proporção similar entre eles.''')
-    del state_ontime_counts
 
     with st.echo():
         temp_df = pd.merge(df_itens, df_produtos, on='product_id', how='left')
@@ -112,8 +110,6 @@ def mostrar_analise_prazos():
                 O motivo é a observação de uma possível categoria problemática nas entregas, mas não há uma categoria de produto
                 com problemas de atraso aparentes.
                 ''')
-    del temp_df
-    del merged_df
     with st.echo():
         # Create a boolean mask for delayed orders
         delayed_orders_mask = df_pedidos['order_delivered_customer_date'] > df_pedidos['order_estimated_delivery_date']
@@ -133,9 +129,6 @@ def mostrar_analise_prazos():
     st.plotly_chart(fig4)
 
     st.markdown('''>O histograma acima nos mostra que a maioria dos pedidos que atrasaram, sofreram atrasos entre 1 (0 não entra na análise, nesse caso o pedido foi entregue dentro do prazo estimado) a 9 dias. ''')
-
-    del delayed_orders_mask
-    del delayed_orders_df
 
     with st.echo():
         # Merge the dataframes
@@ -161,9 +154,6 @@ def mostrar_analise_prazos():
                     title='Atraso Médio de Entrega por Estado')
     
     st.plotly_chart(fig5)
-    del merged_df
-    del delayed_orders
-    del state_delays
 
     st.markdown('''>O gráfico acima mostra o atraso médio dos pedidos em função do estado do cliente, podemos ver que o Amapá possui o maior atraso médio, de 106 dias, no entanto apenas 3 pedidos de  68, que foram pro Amapá atrasaram.''')
 
@@ -196,7 +186,6 @@ def mostrar_trend_compras():
                 
                 >cama_mesa_banho, beleza_saude e esporte_lazer.
                 ''')
-    del product_popularity
     
 
 
@@ -215,7 +204,6 @@ def mostrar_trend_compras():
                 
                 >Mas é necessário se atentar que é uma das categorias menos compradas, com 203 compras no dataset.
                 ''')
-    del average_price_by_category
 
     with st.echo():
         merged_df['purchase_month'] = merged_df['order_purchase_timestamp'].dt.month
@@ -233,7 +221,7 @@ def mostrar_trend_compras():
     st.markdown('''
                 >É possível observar que entre os mêses 3 e 8 se tem maiores quantidades de pedidos no dataset.
                 ''')
-    del monthly_purchases
+
 
 
     with st.echo():
@@ -265,7 +253,6 @@ def analise_avaliacoes():
     st.markdown('''>Aqui agrupamos as avaliações dos clientes por nota, contamos quantas avaliações há para cada nota e criamos um gráfico de barras para visualizar essa distribuição. O gráfico tem eixos rotulados com "Nota da Avaliação" e "Número de Avaliações", com um título indicando que o gráfico mostra a distribuição das avaliações dos clientes.''')
     
     st.plotly_chart(fig1)
-    del review_counts
 
     with st.echo():
         merged_df = pd.merge(df_pedidos, df_clientes, on='customer_id', how='left')
@@ -296,15 +283,15 @@ with tab1:
                 ''')
     st.header("Os bancos do dataset")
     with st.echo():
-        df_categorias = pd.read_csv(categoria_nome)
-        df_clientes = pd.read_csv(clientes)
-        df_geoloc = pd.read_csv(geoloc)
-        df_pedidos = pd.read_csv(pedidos)
-        df_itens = pd.read_csv(itens)
-        df_pagamentos = pd.read_csv(pagamentos)
-        df_produtos = pd.read_csv(produtos)
-        df_reviews = pd.read_csv(reviews)
-        df_vendedores = pd.read_csv(vendedores)
+        df_categorias = pd.read_parquet(categoria_nome)
+        df_clientes = pd.read_parquet(clientes)
+        df_geoloc = pd.read_parquet(geoloc)
+        df_pedidos = pd.read_parquet(pedidos)
+        df_itens = pd.read_parquet(itens)
+        df_pagamentos = pd.read_parquet(pagamentos)
+        df_produtos = pd.read_parquet(produtos)
+        df_reviews = pd.read_parquet(reviews)
+        df_vendedores = pd.read_parquet(vendedores)
     
 
 with tab2:
