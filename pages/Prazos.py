@@ -4,7 +4,7 @@ from arquivos import df_pedidos, df_clientes, df_itens, df_produtos, df_geoloc
 import plotly.express as px
 
 st.header("Análise dos prazos\n")
-
+@st.cache_data
 def mostrar_analise_prazos():
     # Group by 'on_time' and count the number of orders
     with st.echo():
