@@ -4,7 +4,7 @@ from arquivos import df_reviews, df_pedidos, df_clientes
 import plotly.express as px
 
 st.header("Avaliações")
-
+@st.cache_data
 def analise_avaliacoes():
     with st.echo():
         review_counts = df_reviews.groupby('review_score')['review_score'].count().reset_index(name='count')

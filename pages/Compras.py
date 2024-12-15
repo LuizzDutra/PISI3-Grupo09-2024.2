@@ -5,7 +5,7 @@ import plotly.express as px
 
 st.header("Análise das informações de compras\n")
 
-
+@st.cache_data
 def mostrar_trend_compras():
     with st.echo():
         merged_df = pd.merge(df_itens, df_produtos, on='product_id', how='left')

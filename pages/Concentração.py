@@ -5,7 +5,7 @@ import plotly.express as px
 
 st.header("Concentração de vendedores e clientes nos estados")
 
-
+@st.cache_data
 def mostrar_relacao_estados():
     with st.echo():
         clientes_por_estado = df_clientes.groupby('customer_state')['customer_unique_id'].nunique()
