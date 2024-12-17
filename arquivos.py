@@ -24,3 +24,10 @@ df_pedidos['order_estimated_delivery_date'] = pd.to_datetime(df_pedidos['order_e
 df_pedidos['order_delivered_customer_date'] = pd.to_datetime(df_pedidos['order_delivered_customer_date'])
 df_pedidos['order_purchase_timestamp'] = pd.to_datetime(df_pedidos['order_purchase_timestamp'])
 df_pedidos['on_time'] = (df_pedidos['order_delivered_customer_date'] <= df_pedidos['order_estimated_delivery_date']).astype(int)
+
+df = df_pedidos.merge(df_itens, on='order_id', how='inner')
+df = df.merge(df_pagamentos, on='order_id', how='inner', validate='m:m')
+df = df.merge(df_reviews, on='order_id', how='inner')
+df = df.merge(df_produtos, on='product_id', how='inner')
+df = df.merge(df_clientes, on='customer_id', how='inner')
+df = df.merge(df_vendedores, on='seller_id', how='inner')

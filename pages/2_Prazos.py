@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from arquivos import df_pedidos, df_clientes, df_itens, df_produtos, df_geoloc
+from arquivos import df_pedidos, df_clientes, df_itens, df_produtos, df_geoloc, df
 import plotly.express as px
 
 st.header("Análise dos prazos\n")
@@ -26,8 +26,6 @@ def contagem_prazos():
     st.plotly_chart(fig)
     st.markdown('''
                 O gráfico apresenta uma comparação entre o número de pedidos entregues no prazo e os pedidos atrasados. O eixo X representa as categorias de entrega (Atrasado e No Prazo), enquanto o eixo Y exibe o número total de pedidos.
-                - Pedidos Entregues no Prazo: Representam a maior parte dos pedidos.
-                - Pedidos Atrasados: Correspondem a uma parcela menor, mas ainda significativa.
                 ---
                 **Insights Observados**
 
@@ -40,10 +38,7 @@ def contagem_prazos():
                 Categorias de Produto: Produtos específicos podem ter maior probabilidade de atrasos.
                 - Tempo de Processamento: Identificar gargalos na cadeia logística.
 
-
                 5.   Focar na redução da taxa de pedidos atrasados por meio do uso de modelos preditivos para antecipar atrasos e tomar ações corretivas.
-
-
                 ''')
 
 def atraso_medio():
@@ -121,6 +116,34 @@ def count_atrasos_dias():
 
     st.markdown('''>O histograma acima nos mostra que a maioria dos pedidos que atrasaram, sofreram atrasos entre 1 (0 não entra na análise, nesse caso o pedido foi entregue dentro do prazo estimado) a 9 dias. ''')
 
+def entrega_top_10():
+    top_10_categorias = df['product_category_name'].value_counts().head(10)
+
+    # Extract the day of the week from 'Data de Entrega'
+    df['Dia da Semana Entrega'] = df['order_delivered_customer_date'].dt.dayofweek
+
+    # Create the boxplot using plotly
+    fig = px.box(df.loc[df['product_category_name'].isin(top_10_categorias.index)], 
+                x='Dia da Semana Entrega', 
+                y='product_category_name',
+                orientation='h',
+                title='Tempo de Entrega por Categoria de Produto (Top 10)',
+                labels={'Dia da Semana Entrega': 'Dia da Semana de Entrega (0=Segunda, 6=Domingo)',
+                        'product_category_name': 'Categoria do Produto'})
+
+    st.plotly_chart(fig)
+    st.markdown('''
+                O gráfico de barras horizontal mostra o tempo médio de entrega das principais categorias de produtos ao longo da semana. O eixo X representa os dias da semana (0 = Segunda-feira, 6 = Domingo), enquanto o eixo Y indica as categorias de produtos.
+                ---
+                **Insights Observados**
+
+                1.   A maioria das categorias possui tempo médio de entrega concentrado entre 3 e 4 dias úteis, com algumas pequenas variações.
+                2.   Categorias como "utilidades_domesticas", "automotivo" e "moveis_decoracao" têm tempos de entrega mais longos, estendendo-se até a metade da semana (próximos a 4 dias). Isso pode ser explicado por fatores como: Volume ou peso do produto ou menor frequência de pedidos, resultando em menos rotas otimizadas.
+                3.   "informatica_acessorios", "telefonia", "beleza_saude" e "esporte_lazer" apresentam os menores tempos médios de entrega, sendo majoritariamente concluídos em 3 dias úteis. Isso pode indicar processos logísticos mais eficientes ou menor complexidade na distribuição desses produtos.
+
+                4.   A dispersão do tempo de entrega é relativamente uniforme entre as categorias, com poucas variações extremas, sugerindo que o sistema logístico é padronizado, mas ainda há espaço para otimização.
+                ''')
+
 @st.cache_data
 def mostrar_analise_prazos():
     
@@ -128,6 +151,7 @@ def mostrar_analise_prazos():
     atrasos_estados()
     atraso_categorias()
     count_atrasos_dias()
+    entrega_top_10()
     #atraso_medio()
 
     
