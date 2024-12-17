@@ -85,7 +85,7 @@ def atraso_categorias():
                     title='Atraso na Entrega por Categoria de Produto',
                     color_continuous_scale=["#f77678", "#768ff7"])
     st.markdown('''
-                >Aqui é reutilizada a "merged_df" do código anterior além de ser feito um merge com df_itens e df_produtos.
+                >Aqui é feito um merge com df_pedidos, df_clientes, df_itens e df_produtos.
                 Assim sendo possível relacionar a coluna on_time com a categoria do produto através do groupby.
                 Após isso é feita a contagem de produtos por categoria, classificados entre dentro e fora do prazo.''')
     st.plotly_chart(fig3)
