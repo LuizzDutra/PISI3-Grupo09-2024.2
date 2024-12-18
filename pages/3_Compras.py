@@ -30,12 +30,29 @@ def valor_compras_estado():
 def tipo_pagamento():
     # Cálculo das porcentagens de cada tipo de pagamento
     payment_counts = df['payment_type'].value_counts()
+    payment_counts.rename({
+        'debit_card':'Cartão de Débito', 
+        'credit_card':'Cartão de Crédito',
+        'boleto':'Boleto',
+        'voucher':'Voucher'}, inplace=True)
+    #st.dataframe(payment_counts)
     payment_percentages = payment_counts / payment_counts.sum() * 100
 
-    fig = px.pie(df, 
-             names='payment_type', 
-             title='Distribuição dos Tipos de Pagamento',
-             hole=0.3) # Adiciona um furo no centro para melhor visualização
+    fig = px.bar(
+    y=payment_percentages.index,
+    x=payment_percentages.values,
+    labels={'y': 'Tipo de Pagamento', 'z': 'Porcentagem (%)'},
+    title='Distribuição Percentual dos Tipos de Pagamento',
+    orientation='h'
+    )
+
+    # Ajustando o layout para melhor visualização
+    fig.update_layout(
+        yaxis_title="Tipo de Pagamento",
+        xaxis_title="Porcentagem (%)",
+        bargap=0.2,  # Espaço entre as barras
+    )
+
     st.plotly_chart(fig)
     st.markdown('''O gráfico de pizza mostra a distribuição percentual dos métodos de pagamento utilizados em compras no e-commerce. Cada fatia representa a participação de um tipo de pagamento específico.
 ---

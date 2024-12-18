@@ -109,8 +109,8 @@ def count_atrasos_dias():
 
     # Create the plot
     fig4 = px.histogram(delayed_orders_df, x='delay_days', nbins=30,
-                    labels={'delay_days': 'Atraso em Dias'},
-                    title='Dias de Atraso nos Pedidos')
+                    labels={'delay_days': 'Atraso em Dias', 'y':''},
+                    title='Dias de Atraso nos Pedidos').update_layout(yaxis_title='')
 
     st.plotly_chart(fig4)
 
