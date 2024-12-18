@@ -10,12 +10,12 @@ st.header("Concentração de vendedores e clientes nos estados")
 def mostrar_relacao_estados():
     clientes_por_estado = df_clientes.groupby('customer_state')['customer_unique_id'].nunique()
     fig1 = px.bar(clientes_por_estado, x=clientes_por_estado.index, y=clientes_por_estado.values,
-                labels={'x': 'Estado', 'y': 'Número de Clientes Únicos'},
+                labels={'customer_state': 'Estado', 'y': 'Número de Clientes Únicos'},
                 title='Quantidade de Clientes Únicos por Estado')
     
     vendedores_por_estado = df_vendedores.groupby('seller_state')['seller_id'].nunique()
     fig2 = px.bar(vendedores_por_estado, x=vendedores_por_estado.index, y=vendedores_por_estado.values,
-                labels={'x': 'Estado', 'y': 'Número de Vendedores Únicos'},
+                labels={'seller_state': 'Estado', 'y': 'Número de Vendedores Únicos'},
                 title='Quantidade de Vendedores Únicos por Estado')
 
     st.plotly_chart(fig1)
