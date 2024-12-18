@@ -22,7 +22,7 @@ def contagem_prazos():
     #fig.update_xaxes(tickvals=[0, 1], ticktext=['Fora do Prazo', 'No Prazo'])
     fig.update_layout(xaxis=dict(tickmode='array',
                             tickvals=[0, 1],
-                            ticktext=['No Prazo', 'Atrasado']))
+                            ticktext=['Atrasado', 'No Prazo']))
     st.plotly_chart(fig)
     st.markdown('''
                 O gráfico apresenta uma comparação entre o número de pedidos entregues no prazo e os pedidos atrasados. O eixo X representa as categorias de entrega (Atrasado e No Prazo), enquanto o eixo Y exibe o número total de pedidos.
