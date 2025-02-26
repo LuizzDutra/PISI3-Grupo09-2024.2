@@ -29,7 +29,7 @@ def analise_avaliacoes():
     
     st.markdown(''''>Aqui realizamos uma análise de pedidos, avaliando a quantidade de pedidos por estado e a distribuição das avaliações dos clientes (por nota) em relação ao total de pedidos em cada estado. O gráfico gerado mostra a porcentagem de cada nota de avaliação em cada estado, com cores representando as diferentes notas.''')
         
-    fig2 = px.bar(merged_counts, x='customer_state', y='percentage', color='review_score',
+    fig2 = px.bar(merged_counts, x='percentage', y='customer_state', color='review_score',
                     labels={'customer_state': 'Estado do Cliente', 'percentage': 'Porcentagem de Avaliações', 'review_score': 'Nota da Avaliação'},
                     title='Porcentagem de Notas de Avaliação por Estado',
                     color_continuous_scale=["#ff1600", "#76f786"])
