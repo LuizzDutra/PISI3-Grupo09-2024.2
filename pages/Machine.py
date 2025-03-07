@@ -23,7 +23,7 @@ df.fillna({'review_comment_message': '', 'payment_value': 0}, inplace=True)
 nltk.download('punkt', quiet=True)
 nltk.download('stopwords', quiet=True)
 nltk.download('wordnet', quiet=True)
-nltk.download('all', quiet=True)
+#nltk.download('all', quiet=True)
 
 def preprocess_text(text):
     text = re.sub(r'\W+', ' ', text) 
