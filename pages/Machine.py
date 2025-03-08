@@ -14,6 +14,8 @@ from sklearn.metrics import silhouette_score, davies_bouldin_score
 from scipy.sparse import hstack
 import plotly.express as px
 from arquivos import df
+import json
+import requests
 
 # Título da Aplicação
 st.header("Machine Learning - K-Means Clustering")
@@ -111,3 +113,56 @@ plt.xticks(rotation=45)
 plt.tight_layout()
 
 st.pyplot(fig)
+
+@st.cache_data
+def load_geojson():
+    url = "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson"
+    response =  requests.get(url)
+    return response.json()
+
+geojson_brasil = load_geojson()
+
+state_name_to_geojson = {
+    "AC": "Acre", "AL": "Alagoas", "AP": "Amapá", "AM": "Amazonas", "BA": "Bahia",
+    "CE": "Ceará", "DF": "Distrito Federal", "ES": "Espírito Santo", "GO": "Goiás",
+    "MA": "Maranhão", "MT": "Mato Grosso", "MS": "Mato Grosso do Sul", "MG": "Minas Gerais",
+    "PA": "Pará", "PB": "Paraíba", "PR": "Paraná", "PE": "Pernambuco", "PI": "Piauí",
+    "RJ": "Rio de Janeiro", "RN": "Rio Grande do Norte", "RS": "Rio Grande do Sul",
+    "RO": "Rondônia", "RR": "Roraima", "SC": "Santa Catarina", "SP": "São Paulo",
+    "SE": "Sergipe", "TO": "Tocantins"
+}
+map_data_comentarios = df.groupby("customer_state")["review_comment_message"].count().reset_index()
+map_data_comentarios["estado_nome"] = map_data_comentarios["customer_state"].map(state_name_to_geojson)
+
+map_data_comentarios["tooltip"] = map_data_comentarios.apply(
+    lambda row: f"<b>{row['estado_nome']}</b><br>Comentários: {row['review_comment_message']}", axis=1
+)
+
+st.markdown("<h2 style='text-align: left; font-size: 36px;'>Mapa de Comentários por Estado</h2>", unsafe_allow_html=True)
+
+fig_comentarios = px.choropleth(
+    map_data_comentarios,
+    geojson=geojson_brasil,
+    locations="estado_nome",
+    featureidkey="properties.name",
+    color="review_comment_message",
+    color_continuous_scale="Reds",  
+    title="Quantidade de Comentários por Estado",
+    hover_data={"estado_nome": False, "review_comment_message": False, "tooltip": True}  
+)
+
+fig_comentarios.update_geos(
+    fitbounds="locations",  
+    visible=False,  
+    projection_type="mercator" 
+)
+
+fig_comentarios.update_layout(
+    height=800,  
+    width=1200,  
+    margin={"r": 0, "t": 50, "l": 0, "b": 0},  
+    font=dict(size=16), 
+    title_font=dict(size=28)  
+)
+
+st.plotly_chart(fig_comentarios, use_container_width=True)
