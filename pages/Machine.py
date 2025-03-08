@@ -79,9 +79,8 @@ st.subheader("Método do Cotovelo")
 fig_elbow = plot_elbow_method(X_combined)
 st.pyplot(fig_elbow)
 
-k = st.slider("Selecione o número de Clusters", min_value=2, max_value=10, value=5, step=1)
 
-kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+kmeans = KMeans(n_clusters=6, random_state=42, n_init=10)
 
 df['cluster_kmeans'] = kmeans.fit_predict(X_combined)
 
