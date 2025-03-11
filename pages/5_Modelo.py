@@ -2,6 +2,12 @@ import streamlit as st
 import joblib
 import pandas as pd
 import numpy as np
+import pathlib
+#from utils import download_file_from_google_drive
+import os
+import pydrive
+from pydrive.auth import GoogleAuth
+import gdown
 
 @st.cache_data
 def carregar_dados():
@@ -9,7 +15,17 @@ def carregar_dados():
 
 @st.cache_data
 def carregar_modelo():
-    return joblib.load('model/random_forest_model.pkl')
+    with st.spinner():
+        if not pathlib.Path('model/random_forest_model.pkl').exists():
+            with st.spinner('Baixando modelo Random Forest'):
+                os.makedirs('model', exist_ok=True)
+                #modelo
+                gdown.download(id='12R0mWOM-ZyhYv2Ne65bE2PhahWPTcdzm', fuzzy=True, output='model/random_forest_model.pkl')
+                #encoders
+                gdown.download(id='1FpX7eR7xEBkUtXYp-lWpDNRc0Z3t3iTI', fuzzy=True, output='encoders/label_encoder_estado_cliente.pkl')
+                gdown.download(id='1_1rdn7N4-Rd6OxUTqvSJhfuLGmQqtBMc', fuzzy=True, output='encoders/label_encoder_estado_vendedor.pkl')
+                gdown.download(id='1pjBvDzYHHnpUq7902ctUles0PRdfhtb4', fuzzy=True, output='encoders/label_encoder_nome_categoria_produto.pkl')
+        return joblib.load('model/random_forest_model.pkl')
 
 model = carregar_modelo()
 table = carregar_dados()
