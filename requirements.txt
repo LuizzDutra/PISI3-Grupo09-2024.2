@@ -5,3 +5,5 @@ scikit-learn==1.6.1
 pandas>=2.0
 seaborn>=0.12
 pyarrow>=18.0.0
+nltk==3.9.1
+gdown==5.2.0
