@@ -5,8 +5,6 @@ import numpy as np
 import pathlib
 #from utils import download_file_from_google_drive
 import os
-import pydrive
-from pydrive.auth import GoogleAuth
 import gdown
 
 @st.cache_data
